@@ -1895,6 +1895,12 @@ parserFunctions = {
 
     '#titleparts': lambda *args: '', # not supported
 
+    '#dateformat': lambda extr, string, *rest: re.sub(r'\|', ' ', string), #raw: '#dateformat': lambda extr, string, *rest: string
+
+    '#formatdate': lambda extr, string, *rest: re.sub(r'\|', ' ', string), #raw: '#formatdate': lambda extr, string, *rest: string
+
+    '#tag': lambda xtr, string, *rest: string,
+
     # This function is used in some pages to construct links
     # http://meta.wikimedia.org/wiki/Help:URL
     'urlencode': lambda extr, string, *rest: quote(string.encode('utf-8')),
@@ -1909,8 +1915,22 @@ parserFunctions = {
 
     'int': lambda extr, string, *rest: text_type(int(string)),
 
-}
+    'formatnum': lambda extr, string, *rest: re.sub(r'\.', ',', string), #comma is decimal separator! for dot use: 'formatnum': lambda extr, string, *rest: string
 
+    'gender': lambda *args: '', # not supported #HjalmarrSv: not relevant here, because "such as in "inform the user on his/her talk page", not ns0.
+
+    'plural': lambda *args: '', # not supported
+
+    'padleft': lambda *args: '', # not supported
+
+    'padright': lambda *args: '', # not supported
+
+    'as of': lambda *args: '', # not supported #HjalmarrSv #this may be the wrong place in code for this function
+
+    'plural': lambda *args: '', # not supported
+
+    'grammar': lambda *args: '', # not supported
+}
 
 def callParserFunction(functionName, args, extractor):
     """

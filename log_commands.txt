@@ -1,0 +1,5 @@
+# Log of commands use with this repo (excluding initial git clone)
+
+conda create --name ernie python=3.7
+
+# Download
