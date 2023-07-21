@@ -2,7 +2,8 @@ import random
 import numpy as np
 import collections
 import torch
-import tensorflow as tf
+#import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 import indexed_dataset
 
@@ -48,7 +49,7 @@ def create_training_instances(input_file, output_file, max_seq_length,
     ds = indexed_dataset.IndexedDatasetBuilder(output_file+".bin")
 
     # read entity mapping
-    with open("kg_embed/entity2id.txt", 'r') as fin:
+    with open("downloaded_files/kg_embed/entity2id.txt", 'r') as fin:
         d = {}
         fin.readline()
         while 1:
@@ -60,8 +61,8 @@ def create_training_instances(input_file, output_file, max_seq_length,
     
     all_documents = []
     all_documents_ent = []
-    with tf.gfile.GFile(input_file+"_token", "r") as reader:
-        with tf.gfile.GFile(input_file+"_entity", "r") as reader_ent:
+    with tf.io.gfile.GFile(input_file+"_token", "r") as reader:
+        with tf.io.gfile.GFile(input_file+"_entity", "r") as reader_ent:
             while True:
                 line = reader.readline()
                 line_ent = reader_ent.readline()
@@ -269,7 +270,7 @@ def write_instance_to_example_files(instances, max_seq_length,
         max_predictions_per_seq, output_file, vocab_file):
     # read vocab
     vocab_words = []
-    with tf.gfile.GFile(vocab_file, 'r') as fin:
+    with tf.io.gfile.GFile(vocab_file, 'r') as fin:
         for line in fin:
             vocab_words.append(line.strip())
 

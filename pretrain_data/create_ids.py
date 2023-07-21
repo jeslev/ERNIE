@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from nltk.tokenize import sent_tokenize
 import math
 
-vocab_file = "ernie_base/vocab.txt"
+vocab_file = "downloaded_files/ernie_base/vocab.txt"
 do_lower_case = True
 input_folder = "pretrain_data/ann"
 

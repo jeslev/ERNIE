@@ -18,7 +18,7 @@ def run_proc(idx, n, file_list):
         if i % n == idx:
             target = file_list[i].replace("raw", "data")
             print(file_list[i])
-            command = "python3 code/create_instances.py --input_file_prefix {} --output_file {} --vocab_file ernie_base/vocab.txt --dupe_factor 1 --max_seq_length 256 --max_predictions_per_seq 40"
+            command = "python code/create_instances.py --input_file_prefix {} --output_file {} --vocab_file downloaded_files/ernie_base/vocab.txt --dupe_factor 1 --max_seq_length 256 --max_predictions_per_seq 40"
             subprocess.run(command.format(file_list[i], target).split())
 
 if not os.path.exists(output_folder):
