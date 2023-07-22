@@ -176,7 +176,7 @@ def main():
     
     vecs = []
     vecs.append([0]*100) # CLS
-    with open("kg_embed/entity2vec.vec", 'r') as fin:
+    with open("downloaded_files/kg_embed/entity2vec.vec", 'r') as fin:
         for line in fin:
             vec = line.strip().split('\t')
             vec = [float(x) for x in vec]
@@ -204,7 +204,8 @@ def main():
         train_sampler = BatchSampler(train_sampler, args.train_batch_size, True)
         def collate_fn(x):
             x = torch.LongTensor([xx for xx in x])
-
+            #print("collate", len(x))
+            #print("collate", x[0].shape, args.max_seq_length)
             entity_idx = x[:, 4*args.max_seq_length:5*args.max_seq_length]
             # Build candidate
             uniq_idx = np.unique(entity_idx.numpy())
@@ -243,7 +244,12 @@ def main():
         num_train_steps = int(
             len(train_data) / args.train_batch_size / args.gradient_accumulation_steps * args.num_train_epochs)
 
+    #print("debug", num_train_steps)
+    #print("debug",len(train_data))
+    #tmp=train_iterator.next_epoch_itr()
+    #print("debug",next(tmp))
     # Prepare model
+    print(args.bert_model)
     model, missing_keys = BertForPreTraining.from_pretrained(args.bert_model,
               cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(args.local_rank))
     if args.fp16:
