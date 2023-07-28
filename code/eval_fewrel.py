@@ -143,7 +143,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer
     label_map = {label : i for i, label in enumerate(label_list)}
 
     entity2id = {}
-    with open("kg_embed/entity2id.txt") as fin:
+    with open("downloaded_files/kg_embed/entity2id.txt") as fin:
         fin.readline()
         for line in fin:
             qid, eid = line.strip().split('\t')
@@ -421,7 +421,7 @@ def main():
     train_examples, label_list = processor.get_train_examples(args.data_dir)
     vecs = []
     vecs.append([0]*100)
-    with open("kg_embed/entity2vec.vec", 'r') as fin:
+    with open("downloaded_files/kg_embed/entity2vec.vec", 'r') as fin:
         for line in fin:
             vec = line.strip().split('\t')
             vec = [float(x) for x in vec]
