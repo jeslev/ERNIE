@@ -444,8 +444,8 @@ def main():
     model, _ = BertForSequenceClassification.from_pretrained(args.ernie_model,
               cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(args.local_rank),
               num_labels = num_labels)
-    if args.fp16:
-        model.half()
+    #if args.fp16:
+    #    model.half()
     model.to(device)
     if args.local_rank != -1:
         try:
@@ -471,20 +471,18 @@ def main():
         t_total = t_total // torch.distributed.get_world_size()
     if args.fp16:
         try:
-            from apex.optimizers import FP16_Optimizer
+            from apex import amp
             from apex.optimizers import FusedAdam
         except ImportError:
             raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
 
         optimizer = FusedAdam(optimizer_grouped_parameters,
                               lr=args.learning_rate,
-                              bias_correction=True,
-                              max_grad_norm=1.0)
+                              bias_correction=True)
         if args.loss_scale == 0:
-            optimizer = FP16_Optimizer(optimizer, dynamic_loss_scale=True)
+           model, optimizer  = amp.initialize(model, optimizer, opt_level='O1',loss_scale='dynamic')
         else:
-            optimizer = FP16_Optimizer(optimizer, static_loss_scale=args.loss_scale)
-
+            model, optimizer  = amp.initialize(model, optimizer, opt_level='O1',loss_scale=args.loss_scale)
     else:
         optimizer = BertAdam(optimizer_grouped_parameters,
                              lr=args.learning_rate,
@@ -532,7 +530,7 @@ def main():
         output_loss_file = os.path.join(args.output_dir, "loss")
         loss_fout = open(output_loss_file, 'w')
         model.train()
-        for _ in trange(int(args.num_train_epochs), desc="Epoch"):
+        for num_epoch in trange(int(args.num_train_epochs), desc="Epoch"):
             tr_loss = 0
             nb_tr_examples, nb_tr_steps = 0, 0
             for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
@@ -546,7 +544,8 @@ def main():
                     loss = loss / args.gradient_accumulation_steps
 
                 if args.fp16:
-                    optimizer.backward(loss)
+                    with amp.scale_loss(loss, optimizer) as scaled_loss:
+                        scaled_loss.backward()
                 else:
                     loss.backward()
 
@@ -563,7 +562,7 @@ def main():
                     optimizer.zero_grad()
                     global_step += 1
             model_to_save = model.module if hasattr(model, 'module') else model
-            output_model_file = os.path.join(args.output_dir, "pytorch_model.bin_{}".format(global_step))
+            output_model_file = os.path.join(args.output_dir, "pytorch_model.bin_{}".format(num_epoch))
             torch.save(model_to_save.state_dict(), output_model_file)
 
         # Save a trained model
