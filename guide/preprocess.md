@@ -2,8 +2,8 @@
 This document will show step-by-step preprocessing for the ERNIE model with explicative examples.
 
 ```shell
-  # Download Wikidump
-    wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
+# Download Wikidump
+wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
 ```
 
 However, the original ERNIE wikipedia is from 2018 (not specific month). It should be a good idea to use the [internet archive](https://archive.org/download/enwiki-20181220) dump to get the results. The type of file to use is the *pages-articles* that uses the brackets format to specify links or special data.
@@ -62,7 +62,7 @@ Next, we query the Wikipedia api to get information about the entities. We get t
 python3 pretrain_data/create_anchors.py 256 
 ```
 
-# TODO : Check how many UNKs exists, and try to fix it.
+> DONE[TODO] : Check how many UNKs exists. From my own script I found that Wikidata API banned my requests so I had many UNK for entities that existed. For now, I am using the anchor2id.txt file given by the authors.
 
 Finally, it creates a single file anchor2id.txt
 
