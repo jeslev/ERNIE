@@ -7,7 +7,7 @@ import math
 
 vocab_file = "downloaded_files/ernie_base/vocab.txt"
 do_lower_case = True
-input_folder = "pretrain_data/ann"
+input_folder = "pretrain_data/ann_2018"
 
 tokenizer = tokenization.FullTokenizer(
       vocab_file=vocab_file, do_lower_case=do_lower_case)
@@ -24,6 +24,8 @@ sep_id = tokenizer.convert_tokens_to_ids(["sepsepsep"])[0]
 
 # load entity dict
 d_ent = {}
+# example: Antoine%20Ban%C3%A8s    Q16855465
+# We chage using the original file given by authors, since current retrieving takes too much time (changed _me_with_lot_UNK_ents.txt file)
 with open("anchor2id.txt", "r") as fin:
     for line in fin:
         v = line.strip().split("\t")
@@ -31,8 +33,11 @@ with open("anchor2id.txt", "r") as fin:
             continue
         d_ent[v[0]] = v[1]
 
+        
+# Replace in text by WikiID
+# Only works with entities exiting in Wikidata and identified in Wikipedia
 def run_proc(idx, n, file_list):
-    folder = "pretrain_data/raw"
+    folder = "pretrain_data/raw_2018"
     for i in range(len(file_list)):
         if i % n == idx:
             target = "{}/{}".format(folder, i)
@@ -95,7 +100,7 @@ def run_proc(idx, n, file_list):
             fout_ent.close()
             fout_text.close()
 
-folder = "pretrain_data/raw"
+folder = "pretrain_data/raw_2018"
 if not os.path.exists(folder):
     os.makedirs(folder)
 

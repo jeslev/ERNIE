@@ -7,15 +7,16 @@ from nltk.tokenize import sent_tokenize
 import math
 import pdb
 from tqdm import tqdm
+import time
 
 
-anchors = json.load(open("pretrain_data/all_anchors_name.json"))
-part = int(math.ceil(len(anchors) / 256.)) # IMPORTANT! This number must be consistant with workers' number
+anchors = json.load(open("pretrain_data/all_anchors_name_2018.json"))
+part = int(math.ceil(len(anchors) / 192.)) # IMPORTANT! This number must be consistant with workers' number
 anchors = [anchors[i:i+part] for i in range(0, len(anchors), part)]
 print(len(anchors))
 
 def run_proc(idx, n, input_names):
-    folder = "pretrain_data/anchor"
+    folder = "pretrain_data/anchor_2018"
     target = "{}/{}".format(folder, idx)
     fout = open(target+"_anchor2id", "a+")
     for input_name in tqdm(input_names):
@@ -24,15 +25,22 @@ def run_proc(idx, n, input_names):
             entity_info = requests.get(entity_url)
             id = list(entity_info.json()['query']['pages'].items())[0][1]['pageprops']['wikibase_item']
         except:
-            id = '#UNK#'
+            try:
+                time.sleep(1)
+                entity_url = f"https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&ppprop=wikibase_item&redirects=1&titles={input_name}&format=json"
+                entity_info = requests.get(entity_url)
+                id = list(entity_info.json()['query']['pages'].items())[0][1]['pageprops']['wikibase_item']
+            except:
+                id = '#UNK#'
         fout.write(f"{input_name}\t{id}\n")
     fout.close()
 
-folder = "pretrain_data/anchor"
+folder = "pretrain_data/anchor_2018"
 if not os.path.exists(folder):
     os.makedirs(folder)
 
 n = int(sys.argv[1])
+#run_proc(0,n,anchors[0])
 p = Pool(n)
 for i in range(n):
     p.apply_async(run_proc, args=(i, n, anchors[i]))

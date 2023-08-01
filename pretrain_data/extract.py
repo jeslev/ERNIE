@@ -6,7 +6,7 @@ import logging
 from multiprocessing import Pool
 
 logging.basicConfig(level=logging.DEBUG)
-input_folder = "pretrain_data/output"
+input_folder = "pretrain_data/output_2018"
 
 file_list = []
 for path, _, filenames in os.walk(input_folder):
@@ -16,7 +16,7 @@ for path, _, filenames in os.walk(input_folder):
 
 def run_proc(idx, n, file_list):
     for input_name in file_list[idx::n]:
-        target = input_name.replace(input_folder, "pretrain_data/ann")
+        target = input_name.replace(input_folder, "pretrain_data/ann_2018")
         folder = '/'.join(target.split('/')[:-1])
         if not os.path.exists(folder):
             os.makedirs(folder)

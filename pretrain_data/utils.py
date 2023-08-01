@@ -5,7 +5,7 @@ from collections import Counter
 from tqdm import tqdm, trange
 
 def get_all_anchors_name():
-    input_folder = "pretrain_data/ann"
+    input_folder = "pretrain_data/ann_2018"
     file_list = []
     for path, _, filenames in os.walk(input_folder):
         for filename in filenames:
@@ -29,13 +29,13 @@ def get_all_anchors_name():
                 anchors[v[1]] = 1
         fin.close()
     print(len(anchors))
-    json.dump(list(anchors.keys()), open("pretrain_data/all_anchors_name.json", 'w'))
+    json.dump(list(anchors.keys()), open("pretrain_data/all_anchors_name_2018.json", 'w'))
 
 def aggregate_anchor2id():
-    fout = open("anchor2id.txt", 'w')
-    files = os.listdir("pretrain_data/anchor")
+    fout = open("anchor2id_2018.txt", 'w')
+    files = os.listdir("pretrain_data/anchor_2018")
     for file in files:
-        f = open(os.path.join("pretrain_data/anchor", file))
+        f = open(os.path.join("pretrain_data/anchor_2018", file))
         fout.write(f.read())
         f.close()
     fout.close()

@@ -4,8 +4,8 @@ from multiprocessing import Pool
 import math
 import subprocess
 
-input_folder = "pretrain_data/raw"
-output_folder = "pretrain_data/data"
+input_folder = "pretrain_data/raw_2018"
+output_folder = "pretrain_data/data_2018"
 file_list = []
 for path, _, filenames in os.walk(input_folder):
     for filename in filenames:
